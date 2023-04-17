@@ -1,0 +1,45 @@
+<html>
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
+<body>
+<h2 class="text-center">Stocks</h2>
+<table class="table text-center">
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th>Price</th>
+    </tr>
+    </thead>
+    <tbody id="data">
+    </tbody>
+</table>
+
+<script>
+    function formatDecimal(num) {
+        return Math.round(num * 100).toFixed(2);
+    }
+
+    $(document).ready(function () {
+        let olData = {};
+        setInterval(function () {
+            $.ajax({
+                url: "/api/stocks",
+                type: "GET",
+                success: function (data) {
+                    $("#data").empty();
+                    for (const property in data) {
+                        $("#data").append(`<tr>
+                            <td>${property}</td>
+                            <td class="${data[property] < olData[property] ? 'text-danger' : 'text-success'}">${formatDecimal(data[property])}</td>
+                        </tr>`);
+                    }
+                    olData = data;
+                }
+            });
+        }, 3000);
+    });
+</script>
+</body>
+</html>
